@@ -1,0 +1,493 @@
+{
+ "app-id": "org.gnome.Evolution.Local",
+ "runtime": "org.gnome.Platform",
+ "runtime-version": "50",
+ "sdk": "org.gnome.Sdk",
+ "command": "evolution",
+ "rename-icon": "evolution",
+ "copy-icon": true,
+ "appstream-compose": false,
+ "build-options": {
+  "cflags": "-O2 -g -Wno-deprecated-declarations",
+  "cxxflags": "-O2 -g -Wno-deprecated-declarations",
+  "libdir": "/app/lib",
+  "env": {
+   "ACLOCAL_PATH": "/usr/share/gettext/m4/"
+  }
+ },
+ "cleanup": [
+  "*.la",
+  "*.a"
+ ],
+ "finish-args": [
+  "--share=ipc",
+  "--share=network",
+  "--socket=fallback-x11",
+  "--socket=wayland",
+  "--socket=pulseaudio",
+  "--device=dri",
+  "--socket=pcsc",
+  "--talk-name=org.gnome.OnlineAccounts",
+  "--talk-name=org.freedesktop.Notifications",
+  "--talk-name=org.freedesktop.secrets",
+  "--talk-name=org.gnome.keyring.SystemPrompter",
+  "--filesystem=/run/.heim_org.h5l.kcm-socket",
+  "--metadata=X-DConf=migrate-path=/org/gnome/evolution/",
+  "--filesystem=~/.gnupg:rw",
+  "--filesystem=~/.pki:rw",
+  "--filesystem=~/.config/gnupg:rw",
+  "--filesystem=~/.config/pki:rw",
+  "--filesystem=xdg-run/gvfsd:rw"
+ ],
+ "add-extensions": {
+  "org.gnome.Evolution.Local.Extension": {
+   "directory": "evolution/extensions",
+   "add-ld-path": "lib",
+   "merge-dirs": "lib;share",
+   "subdirectories": true,
+   "no-autodownload": true,
+   "autodelete": true
+  }
+ },
+ "modules": [
+  "modules/libcanberra/libcanberra.json",
+  {
+   "name": "libical",
+   "cleanup": [
+    "/lib/cmake"
+   ],
+   "buildsystem": "cmake-ninja",
+   "config-opts": [
+    "-DBUILD_SHARED_LIBS:BOOL=ON",
+    "-DGOBJECT_INTROSPECTION:BOOL=OFF",
+    "-DCMAKE_INSTALL_LIBDIR:PATH=/app/lib",
+    "-DICAL_BUILD_DOCS:BOOL=OFF",
+    "-DICAL_GLIB_VAPI:BOOL=OFF",
+    "-DICAL_GLIB:BOOL=ON",
+    "-DLIBICAL_JAVA_BINDINGS:BOOL=OFF"
+   ],
+   "sources": [
+    {
+     "type": "archive",
+     "url": "https://github.com/libical/libical/releases/download/v4.0.5/libical-4.0.5.tar.gz",
+     "sha256": "cc09a3ac41d60e6144e644bd3fcf97d47106d659c4a0b8965102581401e67c9c"
+    }
+   ]
+  },
+  {
+   "name": "gspell",
+   "buildsystem": "meson",
+   "config-opts": [
+    "-Dgspell_app=false",
+    "-Dvapi=false",
+    "-Dgtk_doc=false",
+    "-Dgobject_introspection=false",
+    "-Dtests=false",
+    "-Dinstall_tests=false"
+   ],
+   "sources": [
+    {
+     "type": "archive",
+     "url": "https://download.gnome.org/sources/gspell/1.14/gspell-1.14.4.tar.xz",
+     "sha256": "e73a89d68c70f8748aefb6b0f5cfdfec3ff173cf4449837fd6cb17d1e9fcf486"
+    }
+   ]
+  },
+  {
+   "name": "liboauth",
+   "config-opts": [
+    "--enable-nss"
+   ],
+   "cleanup": [
+    "/share/man"
+   ],
+   "sources": [
+    {
+     "type": "archive",
+     "url": "https://downloads.sourceforge.net/project/liboauth/liboauth-1.0.3.tar.gz",
+     "sha256": "0df60157b052f0e774ade8a8bac59d6e8d4b464058cc55f9208d72e41156811f"
+    }
+   ]
+  },
+  {
+   "name": "librest",
+   "buildsystem": "meson",
+   "config-opts": [
+    "-Dexamples=false",
+    "-Dgtk_doc=false",
+    "-Dtests=false"
+   ],
+   "sources": [
+    {
+     "type": "archive",
+     "url": "https://download.gnome.org/sources/rest/0.9/rest-0.9.1.tar.xz",
+     "sha256": "9266a5c10ece383e193dfb7ffb07b509cc1f51521ab8dad76af96ed14212c2e3"
+    }
+   ]
+  },
+  {
+   "name": "gnome-online-accounts",
+   "buildsystem": "meson",
+   "config-opts": [
+    "-Dvapi=false",
+    "-Dgoabackend=false",
+    "-Dintrospection=false",
+    "-Dkerberos=false"
+   ],
+   "cleanup": [
+    "/bin",
+    "/share/GConf"
+   ],
+   "sources": [
+    {
+     "type": "archive",
+     "url": "https://download.gnome.org/sources/gnome-online-accounts/3.58/gnome-online-accounts-3.58.1.tar.xz",
+     "sha256": "9ec1900cc51409c2067c07c828c10be06fe3bf68d2999bb72d7d5ed325ed9bbc"
+    }
+   ]
+  },
+  {
+   "name": "geocode-glib",
+   "buildsystem": "meson",
+   "config-opts": [
+    "-Denable-gtk-doc=false",
+    "-Denable-introspection=false",
+    "-Denable-installed-tests=false",
+    "-Dsoup2=false"
+   ],
+   "cleanup": [
+    "/share/gtk-doc"
+   ],
+   "sources": [
+    {
+     "type": "archive",
+     "url": "https://download.gnome.org/sources/geocode-glib/3.26/geocode-glib-3.26.4.tar.xz",
+     "sha256": "2d9a6826d158470449a173871221596da0f83ebdcff98b90c7049089056a37aa"
+    }
+   ]
+  },
+  {
+   "name": "gweather-locations",
+   "buildsystem": "meson",
+   "sources": [
+    {
+     "type": "archive",
+     "url": "https://download.gnome.org/sources/gweather-locations/2026/gweather-locations-2026.2.tar.xz",
+     "sha256": "e7570a3661e0a752a06387b2032585cf588fc56770b1f9f39f1a55d17b2835fe"
+    }
+   ]
+  },
+  {
+   "name": "libgweather4",
+   "buildsystem": "meson",
+   "config-opts": [
+    "-Denable_vala=false",
+    "-Dgtk_doc=false",
+    "-Dintrospection=false",
+    "-Dtests=false"
+   ],
+   "cleanup": [
+    "/lib/girepository-1.0",
+    "/share/gtk-doc",
+    "/share/gir-1.0"
+   ],
+   "sources": [
+    {
+     "type": "archive",
+     "url": "https://download.gnome.org/sources/libgweather/4.6/libgweather-4.6.0.tar.xz",
+     "sha256": "7f5d0e8c9685ef2ff46c2f3a57cae48d7bf3540b2d83921f889ef28e6a876788"
+    }
+   ]
+  },
+  {
+   "name": "openldap",
+   "rm-configure": true,
+   "cleanup": [
+    "/bin",
+    "/share/man"
+   ],
+   "config-opts": [
+    "--disable-backends",
+    "--disable-overlays",
+    "--disable-slapd",
+    "--disable-debug",
+    "--enable-dynamic",
+    "--without-threads",
+    "--with-tls=gnutls"
+   ],
+   "sources": [
+    {
+     "type": "archive",
+     "url": "https://mirror.koddos.net/OpenLDAP/openldap-release/openldap-2.6.15.tgz",
+     "sha512": "33f75c41eb4c61e9ba1995e72b7c20b277b252a9c059b0a9f5a07abd70a0436423c537ba016e385a983b6d6f5d15fbef1e72b64833765511dafcaea9d3084ff0"
+    },
+    {
+     "type": "script",
+     "dest-filename": "autogen.sh",
+     "commands": [
+      "AUTOMAKE=\"/bin/true\" autoreconf -vfi"
+     ]
+    }
+   ]
+  },
+  "modules/intltool/intltool-0.51.json",
+  {
+   "name": "evolution-data-server",
+   "buildsystem": "cmake-ninja",
+   "cleanup": [
+    "/share/GConf"
+   ],
+   "config-opts": [
+    "-DDBUS_SERVICES_PREFIX=org.gnome.Evolution.Local",
+    "-DEXTENSIONS_DIR=/app/evolution/extensions",
+    "-DENABLE_FILE_LOCKING=fcntl",
+    "-DENABLE_DOT_LOCKING=OFF",
+    "-DENABLE_OAUTH2=ON",
+    "-DENABLE_GTK=ON",
+    "-DENABLE_GTK4=OFF",
+    "-DENABLE_UOA=OFF",
+    "-DENABLE_GOA=ON",
+    "-DENABLE_EXAMPLES=OFF",
+    "-DENABLE_INTROSPECTION=OFF",
+    "-DENABLE_VALA_BINDINGS=OFF",
+    "-DENABLE_INSTALLED_TESTS=OFF",
+    "-DENABLE_GTK_DOC=OFF",
+    "-DWITH_LIBDB=OFF",
+    "-DWITH_PRIVATE_DOCS=OFF",
+    "-DWITH_PHONENUMBER=OFF",
+    "-DWITH_SYSTEMDUSERUNITDIR=OFF"
+   ],
+   "sources": [
+    {
+     "type": "git",
+     "path": "../src/evolution-data-server",
+     "branch": "flatpak-build",
+     "disable-fsckobjects": true,
+     "disable-submodules": true
+    }
+   ],
+   "post-install": [
+    "install -d /app/evolution/extensions",
+    "cp NEWS /app/share/NEWS.eds"
+   ]
+  },
+  {
+   "name": "bogofilter",
+   "buildsystem": "simple",
+   "build-commands": [
+    "cd ./bogofilter/ && touch config.rpath && echo \"# Skip for Flatpak build\" > doc/Makefile.am && autoreconf -fi && ./configure --prefix=/app --disable-rpath --with-database=sqlite3 && make && make install"
+   ],
+   "sources": [
+    {
+     "type": "git",
+     "url": "https://gitlab.com/bogofilter/bogofilter.git",
+     "commit": "4ac3f83c7c0ce2eaa98331a72ecc03bd4422d091"
+    }
+   ]
+  },
+  {
+   "name": "cmark",
+   "buildsystem": "cmake-ninja",
+   "builddir": true,
+   "cleanup": [
+    "/bin",
+    "/lib/cmake",
+    "/share"
+   ],
+   "sources": [
+    {
+     "type": "archive",
+     "url": "https://github.com/commonmark/cmark/archive/refs/tags/0.31.2.tar.gz",
+     "sha256": "f9bc5ca38bcb0b727f0056100fac4d743e768872e3bacec7746de28f5700d697"
+    }
+   ]
+  },
+  {
+   "name": "evolution",
+   "buildsystem": "cmake-ninja",
+   "build-options": {
+    "cflags": "-DTEMP_HOME=1"
+   },
+   "config-opts": [
+    "-DVERSION_SUBSTRING= (local)",
+    "-DOVERRIDE_APPLICATION_ID=org.gnome.Evolution.Local",
+    "-DENABLE_AUTOAR=OFF",
+    "-DENABLE_GTK4=OFF",
+    "-DENABLE_CONTACT_MAPS=OFF",
+    "-DENABLE_GNOME_DESKTOP=OFF",
+    "-DENABLE_GTK_DOC=OFF",
+    "-DENABLE_INSTALLED_TESTS=OFF",
+    "-DENABLE_PST_IMPORT=OFF",
+    "-DENABLE_TEXT_HIGHLIGHT=OFF",
+    "-DENABLE_YTNEF=OFF",
+    "-DWITH_BOGOFILTER=/app/bin/bogofilter",
+    "-DWITH_GLADE_CATALOG=OFF",
+    "-DWITH_HELP=ON",
+    "-DWITH_WMCLASS_OVERRIDE=evolution.bin"
+   ],
+   "cleanup": [
+    "/etc/xdg",
+    "/share/GConf"
+   ],
+   "sources": [
+    {
+     "type": "git",
+     "path": "../src/evolution",
+     "branch": "flatpak-build",
+     "disable-fsckobjects": true,
+     "disable-submodules": true
+    },
+    {
+     "type": "shell",
+     "commands": [
+      "cp config.h.in config.h.in.orig",
+      "sed -e 's|@VERSION_SUBSTRING@| (local)|' config.h.in.orig > config.h.in",
+      "cp data/org.gnome.Evolution.metainfo.xml.in.in data/org.gnome.Evolution.metainfo.xml.in.in.orig",
+      "sed -e 's|@APPDATA_RELEASES@|APPDATA_RELEASES|' data/org.gnome.Evolution.metainfo.xml.in.in.orig > data/org.gnome.Evolution.metainfo.xml.in.in",
+      "find . -name '*.metainfo.xml.in' -print0 | xargs -0 -r sed -i 's|<extends>org.gnome.Evolution.desktop</extends>|<extends>org.gnome.Evolution.Local.desktop</extends>|g'"
+     ]
+    }
+   ],
+   "post-install": [
+    "cp NEWS /app/share/NEWS.evo",
+    "cp news-to-appdata.c /app/share/",
+    "mv /app/share/metainfo/org.gnome.Evolution.metainfo.xml /app/share/"
+   ]
+  },
+  {
+   "name": "flatpak-evolution-wrapper",
+   "buildsystem": "simple",
+   "sources": [
+    {
+     "type": "script",
+     "commands": [
+      "if [ \"$1\" = \"--quit\" -o \"$1\" = \"--force-shutdown\" ]; then",
+      "   /app/bin/evolution.bin \"$@\"",
+      "else",
+      "   export BOGOFILTER_DIR=\"${XDG_DATA_HOME}/bogofilter/\"",
+      "   export GIO_USE_NETWORK_MONITOR=base",
+      "   export WEBKIT_DISABLE_SANDBOX_THIS_IS_DANGEROUS=1",
+      "   gsettings reset org.gnome.evolution-data-server network-monitor-gio-name",
+      "",
+      "   LINES=$(gdbus call --session --dest org.freedesktop.DBus --object-path /org/freedesktop/DBus --method org.freedesktop.DBus.ListNames | grep @SOURCES_SERVICE@ | wc -l)",
+      "   if [ \"${LINES}\" = \"0\" ]; then",
+      "      /app/libexec/evolution-source-registry &",
+      "      gdbus wait --session --timeout=1@TIMEOUTMULT@ @SOURCES_SERVICE@",
+      "   fi",
+      "",
+      "   LINES=$(gdbus call --session --dest org.freedesktop.DBus --object-path /org/freedesktop/DBus --method org.freedesktop.DBus.ListNames | grep @ADDRESSBOOK_SERVICE@ | wc -l)",
+      "   if [ \"${LINES}\" = \"0\" ]; then",
+      "      /app/libexec/evolution-addressbook-factory -r &",
+      "      gdbus wait --session --timeout=1@TIMEOUTMULT@ @ADDRESSBOOK_SERVICE@",
+      "   fi",
+      "",
+      "   LINES=$(gdbus call --session --dest org.freedesktop.DBus --object-path /org/freedesktop/DBus --method org.freedesktop.DBus.ListNames | grep @CALENDAR_SERVICE@ | wc -l)",
+      "   if [ \"${LINES}\" = \"0\" ]; then",
+      "      /app/libexec/evolution-calendar-factory -r &",
+      "      gdbus wait --session --timeout=1@TIMEOUTMULT@ @CALENDAR_SERVICE@",
+      "   fi",
+      "",
+      "   /app/bin/evolution.bin \"$@\"",
+      "",
+      "fi"
+     ],
+     "dest-filename": "flatpak-evolution-wrapper.sh.in"
+    },
+    {
+     "type": "script",
+     "commands": [
+      "# see https://gitlab.gnome.org/GNOME/glib/issues/1737",
+      "# previous versions used milliseconds instead of seconds as the timeout argument",
+      "(`pkg-config --atleast-version 2.60.1 gio-2.0` || `pkg-config --atleast-version 2.61.0 gio-2.0`) && TIMEOUTMULT= || TIMEOUTMULT=000",
+      "",
+      "sed -e \"s|\\@SOURCES_SERVICE\\@|$(pkg-config --variable=sourcesdbusservicename evolution-data-server-1.2)|\" \\",
+      "    -e \"s|\\@ADDRESSBOOK_SERVICE\\@|$(pkg-config --variable=addressbookdbusservicename evolution-data-server-1.2)|\" \\",
+      "    -e \"s|\\@CALENDAR_SERVICE\\@|$(pkg-config --variable=calendardbusservicename evolution-data-server-1.2)|\" \\",
+      "    -e \"s|\\@TIMEOUTMULT\\@|${TIMEOUTMULT}|\""
+     ],
+     "dest-filename": "flatpak-evolution-fix-service-names.sh"
+    }
+   ],
+   "build-commands": [
+    "./flatpak-evolution-fix-service-names.sh <flatpak-evolution-wrapper.sh.in >flatpak-evolution-wrapper.sh",
+    "chmod a+x flatpak-evolution-wrapper.sh",
+    "mv /app/bin/evolution /app/bin/evolution.bin",
+    "cp flatpak-evolution-wrapper.sh /app/bin/evolution"
+   ]
+  },
+  {
+   "name": "libmspack",
+   "cleanup": [
+    "/bin"
+   ],
+   "sources": [
+    {
+     "type": "archive",
+     "url": "https://www.cabextract.org.uk/libmspack/libmspack-0.11alpha.tar.gz",
+     "sha256": "70dd1fb2f0aecc36791b71a1e1840e62173079eadaa081192d1c323a0eeea21b",
+     "disable-http-decompression": true
+    }
+   ]
+  },
+  {
+   "name": "evolution-ews",
+   "buildsystem": "cmake-ninja",
+   "sources": [
+    {
+     "type": "git",
+     "path": "../src/evolution-ews",
+     "branch": "flatpak-build",
+     "disable-fsckobjects": true,
+     "disable-submodules": true
+    }
+   ],
+   "post-install": [
+    "cp NEWS /app/share/NEWS.ews"
+   ]
+  },
+  {
+   "name": "news-to-appdata",
+   "buildsystem": "simple",
+   "sources": [
+    {
+     "type": "script",
+     "commands": [
+      "gcc /app/share/news-to-appdata.c -g -O0 -o news-to-appdata `pkg-config --cflags --libs glib-2.0`",
+      "TYPE=${1}",
+      "VER=$(pkg-config --modversion evolution-shell-3.0)",
+      "if [ \"${VER}\" = \"\" ]; then",
+      "   echo \"Failed to get evolution version\" 1>&2",
+      "   exit 1",
+      "fi",
+      "VER=${VER%.*}",
+      "APPDATA_RELEASES=`./news-to-appdata \"\" ${TYPE} ${VER} /app/share/NEWS.evo ${VER} /app/share/NEWS.eds ${VER} /app/share/NEWS.ews`",
+      "APPDATA=`cat /app/share/org.gnome.Evolution.metainfo.xml`",
+      "if [ \"${APPDATA_RELEASES}\" = \"\" ]; then",
+      "    APPDATA_RELEASES=\"<release version=\\\"$(pkg-config --modversion evolution-shell-3.0)\\\" date=\\\"$(date +%Y-%m-%d)\\\" type=\\\"${TYPE}\\\"/>\"",
+      "fi",
+      "echo \"${APPDATA%APPDATA_RELEASES*}${APPDATA_RELEASES}${APPDATA#*APPDATA_RELEASES}\">/app/share/metainfo/org.gnome.Evolution.metainfo.xml",
+      "rm /app/share/NEWS.eds",
+      "rm /app/share/NEWS.evo",
+      "rm /app/share/NEWS.ews",
+      "rm /app/share/news-to-appdata.c",
+      "rm /app/share/org.gnome.Evolution.metainfo.xml"
+     ],
+     "dest-filename": "update-appdata.sh"
+    }
+   ],
+   "build-commands": [
+    "./update-appdata.sh stable"
+   ]
+  },
+  {
+   "name": "drop-symbolic-icon",
+   "buildsystem": "simple",
+   "build-commands": [
+    "rm -f /app/share/icons/hicolor/scalable/apps/evolution-symbolic.svg"
+   ]
+  }
+ ],
+ "rename-desktop-file": "org.gnome.Evolution.desktop",
+ "rename-appdata-file": "org.gnome.Evolution.metainfo.xml",
+ "desktop-file-name-suffix": " (local)"
+}

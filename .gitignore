@@ -1,0 +1,8 @@
+build/
+repo/
+cache/
+*.flatpak
+
+# Local clones of Evolution, EDS, evolution-ews, and flathub/shared-modules.
+src/
+packaging/shared-modules/
