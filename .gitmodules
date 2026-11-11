@@ -1,0 +1,12 @@
+[submodule "src/evolution-data-server"]
+	path = src/evolution-data-server
+	url = https://github.com/ctapmex/evolution-data-server.git
+	branch = local-3.62
+[submodule "src/evolution"]
+	path = src/evolution
+	url = https://github.com/ctapmex/evolution.git
+	branch = local-3.62
+[submodule "src/evolution-ews"]
+	path = src/evolution-ews
+	url = https://github.com/ctapmex/evolution-ews.git
+	branch = local-3.62

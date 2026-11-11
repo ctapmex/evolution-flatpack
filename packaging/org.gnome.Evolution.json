@@ -261,7 +261,7 @@
     {
      "type": "git",
      "path": "../src/evolution-data-server",
-     "branch": "flatpak-build",
+     "branch": "local-3.62",
      "disable-fsckobjects": true,
      "disable-submodules": true
     }
@@ -333,7 +333,7 @@
     {
      "type": "git",
      "path": "../src/evolution",
-     "branch": "flatpak-build",
+     "branch": "local-3.62",
      "disable-fsckobjects": true,
      "disable-submodules": true
     },
@@ -436,7 +436,7 @@
     {
      "type": "git",
      "path": "../src/evolution-ews",
-     "branch": "flatpak-build",
+     "branch": "local-3.62",
      "disable-fsckobjects": true,
      "disable-submodules": true
     }

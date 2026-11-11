@@ -17,43 +17,22 @@ cleanup() {
         /src/repo \
         /src/build \
         /src/cache/flatpak-builder \
+        /src/.git/modules \
+        /src/src/evolution/.git \
+        /src/src/evolution-data-server/.git \
+        /src/src/evolution-ews/.git \
         /src/org.gnome.Evolution.Local.flatpak 2>/dev/null || true
 }
 trap cleanup EXIT
 
-# flatpak-builder cannot checksum a directory, so a "dir" source rebuilds every time.
-# Publish the current tree, including uncommitted edits, as refs/flatpak/build.
-# The ref moves only when the tree changes, and unchanged modules stay cached.
-snapshot_tree() {
-    local repo="$1"
-    local index tree old oldtree commit
-    index="$(mktemp)"
-    (
-        cd "$repo"
-        export GIT_INDEX_FILE="$index"
-        export GIT_AUTHOR_NAME=flatpak-build
-        export GIT_AUTHOR_EMAIL=flatpak-build@local
-        export GIT_COMMITTER_NAME=flatpak-build
-        export GIT_COMMITTER_EMAIL=flatpak-build@local
-        git read-tree HEAD
-        git add -A -- .
-        tree="$(git write-tree)"
-        old="$(git rev-parse -q --verify refs/heads/flatpak-build || true)"
-        if [ -n "$old" ]; then
-            oldtree="$(git rev-parse "${old}^{tree}")"
-            if [ "$oldtree" = "$tree" ]; then
-                exit 0
-            fi
-        fi
-        commit="$(git commit-tree "$tree" -m "flatpak build snapshot")"
-        git update-ref refs/heads/flatpak-build "$commit"
-    )
-    rm -f "$index"
-}
-
-snapshot_tree /src/src/evolution-data-server
-snapshot_tree /src/src/evolution
-snapshot_tree /src/src/evolution-ews
+# The three sources are submodules. flatpak-builder checks out branch local-3.62,
+# so a change is built only after it is committed in that submodule.
+for repo in evolution-data-server evolution evolution-ews; do
+    if [ -n "$(git -C "/src/src/$repo" status --porcelain)" ]; then
+        echo "В $repo есть несохранённые правки. Сборка берёт коммит ветки local-3.62." >&2
+    fi
+    git -C "/src/src/$repo" log -1 --oneline local-3.62
+done
 
 if ! flatpak remotes | grep -q '^flathub'; then
     flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
