@@ -10,7 +10,7 @@
 |---|---|
 | App id | `org.gnome.Evolution.Local` |
 | Бандл | `org.gnome.Evolution.Local.flatpak` |
-| Ветка исходников | `local-3.62` (тег `3.62.1`) |
+| Ветка исходников | `local-3.62` — своя основная ветка, от тега `3.62.1` |
 | Runtime | `org.gnome.Platform//50`, SDK `org.gnome.Sdk//50` |
 | Имя в меню | Evolution (local) |
 | Версия в `--version` | `evolution 3.62.1 (local)` |
@@ -29,32 +29,25 @@
 
 | Каталог | Форк | Upstream (`remote gnome`) |
 |---|---|---|
-| `src/evolution` | https://github.com/ctapmex/evolution | https://gitlab.gnome.org/GNOME/evolution |
-| `src/evolution-data-server` | https://github.com/ctapmex/evolution-data-server | https://gitlab.gnome.org/GNOME/evolution-data-server |
-| `src/evolution-ews` | https://github.com/ctapmex/evolution-ews | https://gitlab.gnome.org/GNOME/evolution-ews |
+| `src/evolution` | git@github.com:ctapmex/evolution.git | https://gitlab.gnome.org/GNOME/evolution |
+| `src/evolution-data-server` | git@github.com:ctapmex/evolution-data-server.git | https://gitlab.gnome.org/GNOME/evolution-data-server |
+| `src/evolution-ews` | git@github.com:ctapmex/evolution-ews.git | https://gitlab.gnome.org/GNOME/evolution-ews |
 
 EDS, evolution и evolution-ews держать одной серии. Сейчас это 3.62.1.
 
 Клоны неглубокие (`--depth 1` от тега). Перед переносом правок на новый тег GNOME: `git fetch --unshallow gnome` в нужном submodule.
 
-Ветка `local-3.62` создана локально от тега. На GitHub её ещё нужно отправить с машины, где есть логин:
-
-```bash
-git -C src/evolution push -u origin local-3.62
-git -C src/evolution-data-server push -u origin local-3.62
-git -C src/evolution-ews push -u origin local-3.62
-```
-
-Пока push не сделан, `git status` в submodule показывает `origin/local-3.62 [gone]`. Коммит тега на форке уже есть.
-
 ## Как вносить правки
 
-1. Править файлы в `src/evolution`, `src/evolution-data-server` или `src/evolution-ews`.
-2. Коммит в этом submodule, на ветке `local-3.62`.
-3. `bash docker/build.sh`.
-4. В корне этого репозитория зафиксировать новый SHA: `git add src/<репозиторий>` и коммит. Так другая копия проекта соберёт ту же правку.
+`local-3.62` в каждом submodule — своя основная ветка. Новая работа начинается от неё и попадает в неё только после проверки.
 
-Сборка читает коммит ветки `local-3.62`. Незакоммиченные файлы в бандл не входят: `docker/build-inside.sh` печатает предупреждение и всё равно берёт ветку. Каталог `src/` в коммит этого репозитория не добавлять — git хранит submodule как gitlink (`160000`).
+1. В нужном submodule создать ветку от `local-3.62` и коммитить только в неё. Незакоммиченные файлы в бандл не входят.
+2. В `packaging/org.gnome.Evolution.json` у этого модуля временно поставить `"branch"` на имя ветки фичи. Остальные модули остаются на `local-3.62`.
+3. `bash docker/build.sh`, затем поставить бандл и проверить.
+4. После подтверждения влить ветку в `local-3.62` через `git merge --no-ff`, чтобы в истории остался коммит слияния. Вернуть в манифесте `"branch": "local-3.62"` и собрать ещё раз.
+5. В корне этого репозитория зафиксировать новый SHA: `git add src/<репозиторий>` и коммит. Каталог `src/` целиком не добавлять — git хранит submodule как gitlink (`160000`). Пока фича не влита, gitlink корня не коммитить.
+
+Сборщик выписывает ветку из манифеста, а не текущий `HEAD` рабочего дерева. Источник типа `dir` и копии дерева не делать: у flatpak-builder 1.4.2 для `dir` контрольная сумма случайная, кэш модуля пропадает и сборка идёт заново.
 
 ## Сборка
 
@@ -76,7 +69,16 @@ bash docker/build.sh
 
 `cache/`, `build/`, `repo/` и `*.flatpak` в git не входят. Весь `cache/` через `chown -R` не прогонять: там многогигабайтный SDK. Контейнер работает от root и в конце возвращает владельцу только `repo/`, `build/`, `cache/flatpak-builder`, gitlink-каталоги submodule и бандл.
 
-Повторный запуск без изменений в `local-3.62` попадает в кэш модулей (порядка минуты). Правка в evolution пересобирает модуль evolution. Смена коммита EDS сама кэш evolution и evolution-ews не сбрасывает: контрольная сумма у каждого модуля своя. После несовместимого изменения EDS эти кэши нужно удалить вручную.
+Повторный запуск без нового коммита на ветке из манифеста попадает в кэш модулей (порядка минуты). Новый коммит пересобирает только свой модуль; ccache остаётся. Смена коммита EDS сама кэш evolution и evolution-ews не сбрасывает: контрольная сумма у каждого модуля своя. После несовместимого изменения EDS эти кэши нужно удалить вручную.
+
+Клоны submodule неглубокие. Если сборка падает с `shallow roots are not allowed to be updated` и `pathspec 'local-3.62' did not match`, `git fetch -p` внутри flatpak-builder стёр ссылки в зеркале `cache/flatpak-builder/git/`. Зеркало и `cache/` не удалять. Вернуть ссылку на коммит, который в зеркале уже есть:
+
+```bash
+git --git-dir=cache/flatpak-builder/git/_src_src_evolution \
+  update-ref refs/heads/local-3.62 "$(git -C src/evolution rev-parse local-3.62)"
+```
+
+То же для `evolution-data-server` и `evolution-ews`, и для ветки фичи, если собирается она. `cat-file -t` по этому коммиту в зеркале должен отвечать `commit`. После этого снова `bash docker/build.sh`.
 
 ## Манифест
 

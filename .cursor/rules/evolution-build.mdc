@@ -1,0 +1,10 @@
+---
+description: Как собирать локальный Evolution и куда коммитить фичи
+alwaysApply: true
+---
+
+# Сборка Evolution
+
+`local-3.62` — основная ветка submodule. Фичу коммитить в ветку от неё. Для проверки поменять только `branch` этого модуля в `packaging/org.gnome.Evolution.json` и запустить `bash docker/build.sh`. В `local-3.62` вливать после подтверждения через `git merge --no-ff`, затем вернуть `branch` на `local-3.62`.
+
+Незакоммиченное в бандл не входит. Не использовать источник `dir` и не копировать исходники: пропадёт кэш модуля. Не удалять `cache/flatpak-builder`. При `shallow roots are not allowed to be updated` восстановить ref в `cache/flatpak-builder/git/_src_src_*` через `update-ref`, зеркало не пересоздавать. Подробности в `AGENTS.md`.

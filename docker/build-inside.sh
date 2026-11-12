@@ -25,11 +25,11 @@ cleanup() {
 }
 trap cleanup EXIT
 
-# The three sources are submodules. flatpak-builder checks out branch local-3.62,
-# so a change is built only after it is committed in that submodule.
+# flatpak-builder checks out the branch named in the manifest, not HEAD
+# and not uncommitted files. local-3.62 is the integration branch.
 for repo in evolution-data-server evolution evolution-ews; do
     if [ -n "$(git -C "/src/src/$repo" status --porcelain)" ]; then
-        echo "В $repo есть несохранённые правки. Сборка берёт коммит ветки local-3.62." >&2
+        echo "В $repo есть несохранённые правки. Сборка берёт коммит ветки из манифеста." >&2
     fi
     git -C "/src/src/$repo" log -1 --oneline local-3.62
 done
