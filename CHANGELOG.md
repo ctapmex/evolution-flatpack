@@ -6,6 +6,18 @@ Local changes on top of Evolution 3.62.1. The source branch is `local-3.62` in `
 
 ## 2026-11-12
 
+Коммиты / commits: `e50dd68` «Show inline images with opaque cid: URIs in the message preview», слияние `b521df3` в `local-3.62`.
+
+### Русский
+
+В просмотре письма встроенная картинка с адресом `cid:…@…` снова видна. Пустую рамку заданного размера принёс коммит `1b5f0424f6` «EWebView: Set CORS allow list on the WebKitWebView for known URI-s» в Evolution 3.62.1 (`src/e-util/e-web-view.c`, запись в `NEWS`, раздел 3.62.1, Miscellaneous): из блока письма WebKitGTK загружает только адреса вида `схема://хост/путь`, и непрозрачный `cid:…@…` в этот список не входит. Это исправление закрывает именно ту проблему: при показе такой адрес переписывается в `cid://evo/…`. Ответ, пересылка и само письмо не меняются — картинка по-прежнему хранится как вложение с тем же Content-ID.
+
+### English
+
+An inline image addressed as `cid:…@…` is visible again in the message preview. The empty box at the given size came from commit `1b5f0424f6` “EWebView: Set CORS allow list on the WebKitWebView for known URI-s” in Evolution 3.62.1 (`src/e-util/e-web-view.c`, noted in `NEWS` under 3.62.1, Miscellaneous): from the message frame WebKitGTK loads only `scheme://host/path` addresses, and an opaque `cid:…@…` is not on that list. This fix closes that problem: for display the address is rewritten to `cid://evo/…`. Reply, forward and the message itself are unchanged: the image remains an attachment with the same Content-ID.
+
+## 2026-11-12
+
 Коммиты / commits: `5565952` «Add an option to keep message headers visible while scrolling», слияние `7750103` в `local-3.62`.
 
 ### Русский
