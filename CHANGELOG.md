@@ -6,6 +6,30 @@ Local changes on top of Evolution 3.62.1. The source branch is `local-3.62` in `
 
 ## 2026-11-12
 
+Коммиты / commits: `7b76cf9` «Show only real file attachments in the message preview», слияние `725a048` в `local-3.62`.
+
+### Русский
+
+В просмотре письма вложением считается только явный файл. Картинка или текст с `Content-Disposition: inline`, в том числе картинка по `cid:` внутри HTML, остаётся в теле письма и не попадает в списки.
+
+Явный файл показывается один раз, в закреплённой панели внизу области просмотра. Строка с тем же файлом в конце тела письма не рисуется, пока панель включена. Если панель выключена пунктом View → Preview → Show attachment bar, эта строка снова появляется: иначе файл было бы неоткуда открыть.
+
+Панель скрыта, когда явных файлов нет. Надписи «0 вложений» и кнопки «Show inline parts in attachments» для картинок тела письма больше нет.
+
+Ответ, пересылка и само письмо не меняются. Скрепка в списке писем не меняется: она и раньше не считала такие картинки вложениями.
+
+### English
+
+In the message preview, only an explicit file is an attachment. An image or text part with `Content-Disposition: inline`, including a `cid:` image inside the HTML, stays in the message body and is not listed.
+
+An explicit file is shown once, in the bar fixed at the bottom of the preview. The same file is not drawn again as a row at the end of the body while that bar is on. Turning the bar off with View → Preview → Show attachment bar brings the row back, so the file can still be opened.
+
+The bar stays hidden when there is no explicit file. Inline body images no longer produce a “0 attachments” strip or a “Show inline parts in attachments” button.
+
+Reply, forward and the message itself are unchanged. The paperclip in the message list is unchanged: it already ignored these images.
+
+## 2026-11-12
+
 Коммиты / commits: `e50dd68` «Show inline images with opaque cid: URIs in the message preview», слияние `b521df3` в `local-3.62`.
 
 ### Русский
