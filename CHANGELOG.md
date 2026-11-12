@@ -6,6 +6,30 @@ Local changes on top of Evolution 3.62.1. The source branch is `local-3.62` in `
 
 ## 2026-11-12
 
+Коммиты / commits: `5565952` «Add an option to keep message headers visible while scrolling», слияние `7750103` в `local-3.62`.
+
+### Русский
+
+При чтении длинного письма блок с отправителем, получателями и датой остаётся вверху области просмотра и не уезжает вместе с телом. Если заголовков много, блок занимает не больше 40% высоты окна и прокручивается внутри себя.
+
+Настройка: Правка → Параметры → Почта → Заголовки, флажок «Keep message headers visible while scrolling». По умолчанию он включён.
+
+Ключ GSettings: `org.gnome.evolution.mail` / `pin-message-headers`.
+
+Закрепляется только шапка самого письма. Печать, просмотр исходника и заголовки вложенных писем прокручиваются как раньше.
+
+### English
+
+While reading a long message, the block with the sender, recipients and date stays at the top of the preview and does not scroll away with the body. When there are many headers, the block is limited to 40% of the window height and scrolls inside itself.
+
+Mail preferences (Edit → Preferences → Mail Preferences → Headers) gain the checkbox “Keep message headers visible while scrolling”. It is on by default.
+
+GSettings key: `org.gnome.evolution.mail` / `pin-message-headers`.
+
+Only the outer message header is pinned. Printing, source view and headers of nested messages keep scrolling with the content.
+
+## 2026-11-12
+
 Коммиты / commits: `471c13f` «Add an option to order flat threads like Outlook», слияние `fa6deb5` в `local-3.62`.
 
 ### Русский
