@@ -4,6 +4,26 @@
 
 Local changes on top of Evolution 3.62.1. The source branch is `local-3.62` in `src/evolution`, `src/evolution-data-server` and `src/evolution-ews`.
 
+## 2026-11-14 — исправления по ревью / review fixes
+
+Коммиты / commits: `ce5a5c3c4c`, `58bd6758fd`, `4883091eea`, `29ef8fb4be`, слияние `d89630a462` в `local-3.62` (`evolution`); `bf2d096f` «ews: fetch body search hits with GetItem», слияние `41efa774` в `local-3.62` (`evolution-ews`).
+
+### Русский
+
+- Поиск **Тело содержит** в Exchange: письма, найденные на сервере и ещё не лежащие в локальной сводке, догружаются через GetItem пачками по 100, с теми же полями, что при обычной синхронизации. Поэтому в списке у них есть получатели и категории (FindItem их не отдаёт). Кэш результатов сервера используется только для самого поиска; если подготовка поиска не удалась, ошибка не скрывается.
+- Встроенная картинка, на которую HTML письма не ссылается через `cid:`, теперь показывается как вложение и не пропадает. Это касается `multipart/related` и `multipart/mixed`.
+- Скрывать ли строку вложения в конце тела письма, решает окно просмотра, форматировщик настройки больше не читает. В главном окне это по-прежнему View → Preview → Show attachment bar, в отдельном окне письма и во вьюере панель вложений есть всегда.
+- Адреса `cid:` переписываются за один проход без лишних копий строки, нужная часть письма ищется одним обходом.
+- Порядок «как в Outlook»: порядок сортировки читается один раз за перестроение списка, а не для каждой цепочки.
+
+### English
+
+- **Body contains** on Exchange: messages the server finds that are not yet in the local summary are fetched with GetItem in batches of 100, with the same properties as a normal sync, so the list shows their recipients and categories (FindItem does not return them). The server result cache is used only by the search itself, and a failed search preparation is reported instead of being hidden.
+- An inline image that the message HTML does not reference through `cid:` is now listed as an attachment instead of disappearing, in both `multipart/related` and `multipart/mixed`.
+- Whether the attachment row at the end of the body is hidden is decided by the display owner; the formatter no longer reads the setting. In the main window it still follows View → Preview → Show attachment bar; the separate message window and the viewer always have the attachment bar.
+- `cid:` addresses are rewritten in one pass without extra string copies, and the referenced part is found in a single walk.
+- Outlook order: the sort order is read once per list regeneration instead of once per thread.
+
 ## 2026-11-14
 
 Коммиты / commits: `a4c31d79d8` «Add an option to show messages from other folders in threads», слияние `e1aab86ef1` в `local-3.62`.
