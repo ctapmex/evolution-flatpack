@@ -4,6 +4,38 @@
 
 Local changes on top of Evolution 3.62.1. The source branch is `local-3.62` in `src/evolution`, `src/evolution-data-server` and `src/evolution-ews`.
 
+## 2026-11-14
+
+Коммиты / commits: `a4c31d79d8` «Add an option to show messages from other folders in threads», слияние `e1aab86ef1` в `local-3.62`.
+
+### Русский
+
+В настройках почты (Правка → Параметры → Почта → Общие) добавлен флажок «Show messages from other folders in threads». По умолчанию он выключен. Он действует, когда включена группировка по цепочкам, и не зависит от плоских цепочек и от порядка «как в Outlook».
+
+Ключ GSettings: `org.gnome.evolution.mail` / `thread-include-other-folders`.
+
+Когда флажок включён, в цепочку видимого письма добавляются связанные письма из других папок того же ящика и из папки «Отправленные» учётной записи, даже если она лежит в другом хранилище («На этом компьютере»). Письма не переносятся. Связь только по Message-ID и References: одинаковая тема сама по себе письма из разных папок не склеивает. Копия с тем же Message-ID второй раз не показывается.
+
+Не подмешиваются Корзина, нежелательная почта и папки контактов, событий, заметок и задач. Поиск по-прежнему отбирает только текущую папку; письма из других папок добавляются лишь в уже видимые цепочки.
+
+Строка из другой папки обычной яркости. После темы стоит имя её папки, например `Re: договор · Отправленные`. Открытие, ответ, флаги, удаление, перенос и «Сохранить как» работают с настоящей папкой этого письма. Выделение из нескольких папок сохраняется в один файл в порядке списка. Счётчики, поиск и дерево папок остаются у текущей папки.
+
+Нужны заголовки в локальной сводке папки: папка должна быть открыта хотя бы раз. Тело скачивается, когда строку открывают. Ответ, отправленный другим клиентом, появится, когда его копия попадёт в такую папку и в заголовках будет ссылка на исходное письмо.
+
+### English
+
+Mail preferences (Edit → Preferences → Mail Preferences → General) gain the checkbox “Show messages from other folders in threads”. It is off by default. It applies whenever messages are grouped by threads, independently of flat threads and of the Outlook order.
+
+GSettings key: `org.gnome.evolution.mail` / `thread-include-other-folders`.
+
+With the option on, a visible thread also lists related messages from the other folders of the same account and from the account’s Sent folder, even when that folder lives in another store (“On This Computer”). Messages are not moved. Matching uses Message-ID and References only: the same subject does not by itself join messages from different folders. A second copy with the same Message-ID is not shown.
+
+Trash, Junk and the contacts, events, memos and tasks folders are left out. Search still filters only the current folder; messages from other folders are added only to threads that are already visible.
+
+A row from another folder keeps full contrast. The folder name is appended to the subject, for example `Re: договор · Отправленные`. Open, reply, flags, delete, move and Save As act on that message’s real folder. A selection that spans several folders is saved to one file in list order. Counts, search and the folder tree stay with the current folder.
+
+The folder’s local summary has to contain the headers, so the folder must have been opened at least once. The body is downloaded when the row is opened. A reply sent from another client appears once its copy is in such a folder and its headers refer to the original message.
+
 ## 2026-11-13
 
 Коммиты / commits: `7ea0637f3` «camel: prepare a remote body search before the local query», слияние `e935064cd` в `local-3.62` (`evolution-data-server`); `b9e1be7f` «ews: search message bodies on the server», слияние `247376ce` в `local-3.62` (`evolution-ews`).
